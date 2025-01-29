@@ -3,6 +3,7 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const { snakeToCamelCase } = require("../utils/miscUtils");
 
 const registerUser = async (req, res) => {
   try {
@@ -50,7 +51,7 @@ const registerUser = async (req, res) => {
     );
 
     // Send OTP via email
-    await sendOTPEmail(email, otp);
+    // await sendOTPEmail(email, otp);
 
     return res
       .status(201)
@@ -110,7 +111,7 @@ const login = async (req, res) => {
         .json({ status: "error", message: "User does not exist" });
     }
 
-    const existingUser = users[0];
+    const existingUser = snakeToCamelCase(users[0]);
 
     // Check if user is VERIFIED
     if (existingUser.status !== "VERIFIED") {
@@ -130,11 +131,27 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token (expires in 10 days)
+    const {
+      customerId,
+      firstName,
+      lastName,
+      mobile,
+      dob,
+      gender,
+      role,
+      status,
+    } = existingUser;
     const token = jwt.sign(
       {
-        customer_id: existingUser.customer_id,
-        email: existingUser.email,
-        role: existingUser.role,
+        customerId,
+        email: email,
+        firstName,
+        lastName,
+        mobile,
+        dob,
+        gender,
+        role,
+        status,
       },
       process.env.JWT_SECRET,
       { expiresIn: "10d" } // Token expires in 10 days

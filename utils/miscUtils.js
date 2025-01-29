@@ -10,6 +10,11 @@ const snakeToCamelCase = (obj) =>
     return acc;
   }, {});
 
+const undefinedOrValue = (o, n) => {
+  return n === undefined ? o : n;
+};
+
 module.exports = {
   snakeToCamelCase,
+  undefinedOrValue,
 };
