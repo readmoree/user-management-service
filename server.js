@@ -2,10 +2,35 @@ const express = require("express");
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const morgan = require("morgan");
+<<<<<<< Updated upstream
 const authMiddleware = require("./middlewares/authMiddleware");
+=======
+const cors = require("cors");
+const session = require("express-session");
+
+>>>>>>> Stashed changes
 require("dotenv").config();
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Frontend URL
+    credentials: true, // Allow cookies to be sent
+  })
+);
+app.use(
+  session({
+    secret: "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to `true` if using HTTPS
+      httpOnly: true,
+      sameSite: "lax", // Helps maintain session in cross-origin requests
+      maxAge: 2 * 60 * 1000, // 10 minutes
+    },
+  })
+);
 app.use(morgan("combined"));
 
 app.use(express.json());

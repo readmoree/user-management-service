@@ -3,9 +3,14 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+<<<<<<< Updated upstream
 const { snakeToCamelCase } = require("../utils/miscUtils");
+=======
+const sendOTPEmail = require("../utils/emailService");
+>>>>>>> Stashed changes
 
 const registerUser = async (req, res) => {
+  console.log("hiii");
   try {
     const { firstName, lastName, email, password, phone, dob, gender } =
       req.body;
@@ -53,6 +58,10 @@ const registerUser = async (req, res) => {
     // Send OTP via email
     // await sendOTPEmail(email, otp);
 
+    //Store email in session
+    req.session.email = email;
+    console.log("Session set:", req.session.email); // Debugging purpose
+
     return res
       .status(201)
       .json({ status: "success", message: "OTP sent to email" });
@@ -65,7 +74,15 @@ const registerUser = async (req, res) => {
 };
 const verifyEmail = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { otp } = req.body;
+    const email = req.session.email;
+    console.log(email);
+    if (!email) {
+      return res.status(400).json({
+        status: "error",
+        message: "Session expired. Please register again.",
+      });
+    }
 
     // Check if OTP is valid and not expired
     const [otpRecord] = await db.query(
@@ -87,6 +104,12 @@ const verifyEmail = async (req, res) => {
     // Delete OTP record
     await db.query("DELETE FROM email_verification WHERE otp = ?", [otp]);
 
+    // Clear the session after successful verification
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Session destruction error:", err);
+      }
+    });
     return res
       .status(200)
       .json({ status: "success", message: "Email verified successfully" });
@@ -101,10 +124,18 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log(email);
+    console.log(req.body);
+    // email = email.toString();
+    const trimmedEmail = email.trim();
     const [users] = await db.query("SELECT * FROM customer WHERE email = ?", [
-      email,
+      trimmedEmail,
     ]);
+    console.log("Users from DB:", users);
 
+    console.log("Users from DB:", users);
+
+    console.log(users);
     if (users.length === 0) {
       return res
         .status(404)
@@ -143,6 +174,7 @@ const login = async (req, res) => {
     } = existingUser;
     const token = jwt.sign(
       {
+<<<<<<< Updated upstream
         customerId,
         email: email,
         firstName,
@@ -152,6 +184,12 @@ const login = async (req, res) => {
         gender,
         role,
         status,
+=======
+        firstName: existingUser.first_name,
+        customer_id: existingUser.customer_id,
+        email: existingUser.email,
+        role: existingUser.role,
+>>>>>>> Stashed changes
       },
       process.env.JWT_SECRET,
       { expiresIn: "10d" } // Token expires in 10 days
