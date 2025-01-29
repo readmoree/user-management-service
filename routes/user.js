@@ -9,6 +9,9 @@ const {
   getAddressById,
   updateAddressById,
   deleteAddressById,
+  getUser,
+  deleteUser,
+  updateUser,
 } = require("../controllers/userController");
 require("dotenv").config();
 
@@ -16,7 +19,21 @@ const router = express.Router();
 
 /*
     METHOD: GET
-    lists all address for a logged in user
+    Gets details for the currently logged in user
+    example endpoint: https://localhost:4000/user
+*/
+router.get("/", getUser);
+
+router.patch("/", updateUser);
+/*
+    METHOD: DELETE
+    Deletes currently logged in user
+    example endpoint: https://localhost:4000/user
+*/
+router.delete("/", deleteUser);
+/*
+    METHOD: GET
+    Lists all address for a logged in user
     example endpoint: https://localhost:4000/user/address
 */
 router.get("/address", getAllAddressForAnUser);

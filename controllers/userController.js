@@ -4,6 +4,89 @@ const db = require("../config/db");
 const { snakeToCamelCase, undefinedOrValue } = require("../utils/miscUtils");
 require("dotenv").config();
 
+const getUser = async (req, res) => {
+  try {
+    const { customerId } = req.user;
+
+    const [user] = await db.query(
+      "SELECT * FROM customer WHERE customer_id = ?",
+      [customerId]
+    );
+    const { email, firstName, lastName, mobile, dob, gender, role, status } =
+      snakeToCamelCase(user[0]);
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        customerId,
+        email,
+        firstName,
+        lastName,
+        mobile,
+        dob,
+        gender,
+        role,
+        status,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const user = req.user;
+    const { email, firstName, lastName, mobile, gender } = req.body;
+
+    await db.query(
+      "UPDATE customer SET email = ?, first_name = ?, last_name = ?, mobile = ?, gender = ? WHERE customer_id = ?",
+      [
+        undefinedOrValue(user.email, email),
+        undefinedOrValue(user.firstName, firstName),
+        undefinedOrValue(user.lastName, lastName),
+        undefinedOrValue(user.mobile, mobile),
+        undefinedOrValue(user.gender, gender),
+        user.customerId,
+      ]
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "User updated",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { customerId } = req.user;
+
+    await db.query("DELETE FROM customer WHERE customer_id = ?", [customerId]);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Current user deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
 const getAllAddressForAnUser = async (req, res) => {
   try {
     const { customerId } = req.user;
@@ -198,9 +281,12 @@ const deleteAddressById = async (req, res) => {
 };
 
 module.exports = {
+  getUser,
   getAddressById,
   getAllAddressForAnUser,
   addNewAddress,
+  deleteUser,
   deleteAddressById,
+  updateUser,
   updateAddressById,
 };
