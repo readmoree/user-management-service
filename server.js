@@ -2,13 +2,9 @@ const express = require("express");
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const morgan = require("morgan");
-<<<<<<< Updated upstream
 const authMiddleware = require("./middlewares/authMiddleware");
-=======
 const cors = require("cors");
 const session = require("express-session");
-
->>>>>>> Stashed changes
 require("dotenv").config();
 const app = express();
 

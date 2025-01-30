@@ -3,11 +3,8 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-<<<<<<< Updated upstream
 const { snakeToCamelCase } = require("../utils/miscUtils");
-=======
 const sendOTPEmail = require("../utils/emailService");
->>>>>>> Stashed changes
 
 const registerUser = async (req, res) => {
   console.log("hiii");
@@ -161,35 +158,12 @@ const login = async (req, res) => {
         .json({ status: "error", message: "Invalid Email or Password" });
     }
 
-    // Generate JWT token (expires in 10 days)
-    const {
-      customerId,
-      firstName,
-      lastName,
-      mobile,
-      dob,
-      gender,
-      role,
-      status,
-    } = existingUser;
     const token = jwt.sign(
       {
-<<<<<<< Updated upstream
-        customerId,
-        email: email,
-        firstName,
-        lastName,
-        mobile,
-        dob,
-        gender,
-        role,
-        status,
-=======
         firstName: existingUser.first_name,
         customer_id: existingUser.customer_id,
         email: existingUser.email,
         role: existingUser.role,
->>>>>>> Stashed changes
       },
       process.env.JWT_SECRET,
       { expiresIn: "10d" } // Token expires in 10 days
