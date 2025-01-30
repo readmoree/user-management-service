@@ -1,8 +1,6 @@
 /* Vivek@28/01 on VSCode  */
 
 const express = require("express");
-const db = require("../config/db");
-const { snakeToCamelCase, undefinedOrValue } = require("../utils/miscUtils");
 const {
   getAllAddressForAnUser,
   addNewAddress,
@@ -19,18 +17,29 @@ const router = express.Router();
 
 /*
     METHOD: GET
-    Gets details for the currently logged in user
+    Get details of the currently logged in user
     example endpoint: https://localhost:4000/user
 */
 router.get("/", getUser);
 
+/*
+    METHOD: PATCH
+    Update details of the currently logged in user
+    example endpoint: https://localhost:4000/user
+
+    Request body fields: {
+      email, firstName, lastName, mobile, gender
+    }
+*/
 router.patch("/", updateUser);
+
 /*
     METHOD: DELETE
     Deletes currently logged in user
     example endpoint: https://localhost:4000/user
 */
 router.delete("/", deleteUser);
+
 /*
     METHOD: GET
     Lists all address for a logged in user

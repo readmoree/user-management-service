@@ -53,7 +53,7 @@ const registerUser = async (req, res) => {
     );
 
     // Send OTP via email
-    // await sendOTPEmail(email, otp);
+    await sendOTPEmail(email, otp);
 
     //Store email in session
     req.session.email = email;
@@ -160,8 +160,8 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       {
-        firstName: existingUser.first_name,
-        customer_id: existingUser.customer_id,
+        firstName: existingUser.firstName,
+        customerId: existingUser.customerId,
         email: existingUser.email,
         role: existingUser.role,
       },

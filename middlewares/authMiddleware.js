@@ -20,18 +20,26 @@ const authMiddleware = async (req, res, next) => {
       const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
 
+      console.log(decoded);
+
       const [user] = await db.query(
         "SELECT * FROM customer WHERE customer_id = ?",
         [decoded.customerId]
       );
-      if (user.length == 0) {
+      if (user.length === 0) {
         return res.status(404).json({
           status: "error",
           message: "User does not exist",
         });
       }
 
-      console.log(decoded);
+      if (req.url.startsWith("/admin") && user[0].role !== "ADMIN") {
+        return res.status(400).json({
+          status: "error",
+          message: "No admin privileges",
+        });
+      }
+
       req.user = decoded; // Attach user info to request object
       next(); // Proceed to next middleware or route
     } catch (error) {

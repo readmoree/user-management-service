@@ -43,14 +43,19 @@ const updateUser = async (req, res) => {
     const user = req.user;
     const { email, firstName, lastName, mobile, gender } = req.body;
 
+    const [result] = await db.query(
+      "SELECT * FROM customer WHERE customer_id = ?",
+      [user.customerId]
+    );
+
     await db.query(
       "UPDATE customer SET email = ?, first_name = ?, last_name = ?, mobile = ?, gender = ? WHERE customer_id = ?",
       [
-        undefinedOrValue(user.email, email),
-        undefinedOrValue(user.firstName, firstName),
-        undefinedOrValue(user.lastName, lastName),
-        undefinedOrValue(user.mobile, mobile),
-        undefinedOrValue(user.gender, gender),
+        undefinedOrValue(result[0].email, email),
+        undefinedOrValue(result[0].first_name, firstName),
+        undefinedOrValue(result[0].last_name, lastName),
+        undefinedOrValue(result[0].mobile, mobile),
+        undefinedOrValue(result[0].gender, gender),
         user.customerId,
       ]
     );
