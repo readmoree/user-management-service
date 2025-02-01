@@ -10,6 +10,8 @@ const {
   getUser,
   deleteUser,
   updateUser,
+  getUserRole,
+  setAddressDefault,
 } = require("../controllers/userController");
 require("dotenv").config();
 
@@ -39,6 +41,13 @@ router.patch("/", updateUser);
     example endpoint: https://localhost:4000/user
 */
 router.delete("/", deleteUser);
+
+/*
+    METHOD: GET
+    Returns user's role
+    example endpoint: https://localhost:4000/user/role
+*/
+router.get("/role", getUserRole);
 
 /*
     METHOD: GET
@@ -75,6 +84,13 @@ router.get("/address/:id", getAddressById);
     }
 */
 router.patch("/address/:id", updateAddressById);
+
+/*
+    METHOD: PATCH
+    Marks the given address as default address
+    example endpoint: https://localhost:4000/user/address/1/set-default
+*/
+router.patch("/address/:id/set-default", setAddressDefault);
 
 /*
     METHOD: DELETE
