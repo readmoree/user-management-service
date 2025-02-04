@@ -2,6 +2,7 @@ const express = require("express");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
+const publicRouter = require("./routes/public");
 const morgan = require("morgan");
 const authMiddleware = require("./middlewares/authMiddleware");
 const cors = require("cors");
@@ -37,6 +38,7 @@ app.use(authMiddleware);
 app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
+app.use("/public", publicRouter);
 
 app.listen(4000, "0.0.0.0", () => {
   console.log(`server started on port 4000`);

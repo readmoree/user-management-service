@@ -24,12 +24,13 @@ CREATE TABLE address (
     pincode VARCHAR(20) DEFAULT NULL,
     state VARCHAR(100) DEFAULT NULL,
     country VARCHAR(100) DEFAULT NULL,
+    address_label VARCHAR(20),
+    is_default BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (address_id),
     FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE,
     KEY (city),
     KEY (pincode)
 );
-
 
 CREATE TABLE email_verification (
     id INT NOT NULL AUTO_INCREMENT,

@@ -12,6 +12,7 @@ const {
   updateUser,
   getUserRole,
   setAddressDefault,
+  getUserByIds,
 } = require("../controllers/userController");
 require("dotenv").config();
 

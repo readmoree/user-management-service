@@ -174,7 +174,7 @@ const addNewAddress = async (req, res) => {
     } = req.body;
 
     // insert new address into the table
-    await db.query(
+    const [result] = await db.query(
       "INSERT INTO address(customer_id, flat_no, building_name, locality, area, city, district, pincode, state, country, address_label) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         customerId,
@@ -194,6 +194,7 @@ const addNewAddress = async (req, res) => {
     return res.status(201).json({
       status: "success",
       message: "Address added",
+      insertedId: result.insertId,
     });
   } catch (error) {
     console.error(error);
