@@ -8,6 +8,7 @@ const sendOTPEmail = require("../utils/emailService");
 
 const registerUser = async (req, res) => {
   console.log("hiii");
+  console.log("hiii");
   try {
     const { firstName, lastName, email, password, phone, dob, gender } =
       req.body;
@@ -17,6 +18,7 @@ const registerUser = async (req, res) => {
       "SELECT * FROM customer WHERE email = ?",
       [email]
     );
+    console.log(existingUser);
     if (existingUser.length > 0) {
       return res
         .status(400)
@@ -42,6 +44,7 @@ const registerUser = async (req, res) => {
       ]
     );
 
+    console.log(user);
     // Generate OTP
     const otp = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
@@ -57,7 +60,7 @@ const registerUser = async (req, res) => {
 
     //Store email in session
     req.session.email = email;
-    console.log("Session set:", req.session.email); // Debugging purpose
+    console.log("Session set:", req.session.email); // Debugging purpos
 
     return res
       .status(201)
@@ -107,6 +110,7 @@ const verifyEmail = async (req, res) => {
         console.error("Session destruction error:", err);
       }
     });
+
     return res
       .status(200)
       .json({ status: "success", message: "Email verified successfully" });
@@ -128,9 +132,6 @@ const login = async (req, res) => {
     const [users] = await db.query("SELECT * FROM customer WHERE email = ?", [
       trimmedEmail,
     ]);
-    console.log("Users from DB:", users);
-
-    console.log("Users from DB:", users);
 
     console.log(users);
     if (users.length === 0) {
@@ -142,7 +143,10 @@ const login = async (req, res) => {
     const existingUser = snakeToCamelCase(users[0]);
 
     // Check if user is VERIFIED
-    if (existingUser.status !== "VERIFIED") {
+    if (
+      existingUser.status !== "VERIFIED" &&
+      existingUser.role === "CUSTOMER"
+    ) {
       return res.status(403).json({
         status: "error",
         message: "User is not verified.",
@@ -168,10 +172,14 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "10d" } // Token expires in 10 days
     );
+    console.log(token);
 
-    return res
-      .status(200)
-      .json({ status: "success", message: "Login Successful", token });
+    return res.status(200).json({
+      status: "success",
+      message: "Login Successful",
+      token,
+      role: existingUser.role,
+    });
   } catch (error) {
     console.error(error);
     return res
