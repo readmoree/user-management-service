@@ -4,9 +4,12 @@ require("dotenv").config();
 
 const authMiddleware = async (req, res, next) => {
   // Get the token from headers
+  console.log("header" + req.headers);
   const authHeader = req.headers["authorization"]; // Usually "Bearer <token>"
 
-  if (["/auth/register", "/auth/login"].includes(req.url)) {
+  if (
+    ["/auth/register", "/auth/login", "/auth/verify-email"].includes(req.url)
+  ) {
     next();
   } else {
     if (!authHeader) {

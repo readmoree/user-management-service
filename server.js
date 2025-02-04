@@ -2,6 +2,7 @@ const express = require("express");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
+const cartWishlistRouter = require("./routes/cartWishlist");
 const morgan = require("morgan");
 const authMiddleware = require("./middlewares/authMiddleware");
 const cors = require("cors");
@@ -28,6 +29,7 @@ app.use(
     },
   })
 );
+
 app.use(morgan("combined"));
 
 app.use(express.json());
@@ -37,6 +39,7 @@ app.use(authMiddleware);
 app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
+app.use("/api", cartWishlistRouter);
 
 app.listen(4000, "0.0.0.0", () => {
   console.log(`server started on port 4000`);
