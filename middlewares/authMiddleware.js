@@ -8,7 +8,8 @@ const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers["authorization"]; // Usually "Bearer <token>"
 
   if (
-    ["/auth/register", "/auth/login", "/auth/verify-email"].includes(req.url)
+    ["/auth/register", "/auth/login", "/auth/verify-email"].includes(req.url) ||
+    req.url.startsWith("/public")
   ) {
     next();
   } else {

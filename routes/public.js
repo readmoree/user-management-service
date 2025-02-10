@@ -23,7 +23,7 @@ router.get("/users", async (req, res) => {
     }
 
     const [users] = await db.query(
-      `SELECT customer_id, first_name, last_name FROM customer WHERE customer_id IN(${query})`,
+      `SELECT customer_id, first_name, last_name, email FROM customer WHERE customer_id IN(${query})`,
       []
     );
     const userData = users.map((user) => ({
