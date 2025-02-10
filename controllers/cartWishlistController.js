@@ -2,6 +2,7 @@ const db = require("../config/db");
 const { snakeToCamelCase, undefinedOrValue } = require("../utils/miscUtils");
 require("dotenv").config();
 const axios = require("axios");
+const sendInvoiceEmail = require("../utils/InvoiceService");
 
 const stripe = require("stripe")(
   "sk_test_51QoHczGgebrKK2S2RAIdj5rJqzRVgIb61IkzdhMVeUQ2UOXhsAQJs67X6K2dSnowMZGAvYT3m3Cq8warpF4dWM3K00AlNn6Vwt"
@@ -285,9 +286,9 @@ const getPaymentPage = async (req, res) => {
 
     line_items: lineItems,
     mode: "payment",
+    success_url: "http://localhost:3000/order-confirmation",
+    cancel_url: "http://localhost:3000/order-confirmation",
   });
-
-  console.log(session);
   res.json({ id: session.id });
 };
 
@@ -320,6 +321,113 @@ const makeCartEmpty = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const sendInvoices = async (req, res) => {
+  try {
+    console.log("In the send invoice");
+
+    const { firstName, lastName, email } = req.user;
+    const invoiceDetails = req.body;
+
+    if (!invoiceDetails) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invoice details are required." });
+    }
+
+    const orderDetails = {
+      ...invoiceDetails,
+      customerName: `${firstName} ${lastName}`,
+      email: email,
+    };
+
+    await sendInvoiceEmail(orderDetails, email);
+
+    res
+      .status(200)
+      .json({ success: true, message: "Invoice sent successfully." });
+  } catch (error) {
+    console.error("Error sending invoice:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to send invoice. Please try again later.",
+    });
+  }
+};
+const addBookToCart = async (req, res) => {
+  try {
+    const { customerId } = req.user; // Extract customerId from user object
+
+    const { bookId, quantity } = req.params; // Extract bookId from request parameters
+
+    if (!customerId) {
+      return res.status(400).json({ error: "Customer ID is required" });
+    }
+
+    if (!bookId) {
+      return res.status(400).json({ error: "Book ID is required" });
+    }
+
+    // Construct the API URL
+    const apiUrl = `${process.env.CART_SERVICE_URL}/api/Cart/add-cart/${customerId}/${bookId}/${quantity}`;
+
+    // Make the DELETE request to the Cart service
+    const response = await axios.post(apiUrl);
+
+    // Return the response received from the Cart service
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error in Adding Book to Cart", error.message);
+
+    // Handle errors gracefully
+    if (error.response) {
+      return res
+        .status(error.response.status)
+        .json({ error: error.response.data });
+    }
+
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const addBookToWishlist = async (req, res) => {
+  try {
+    console.log("in the add to wishlist service");
+    const { customerId } = req.user; // Extract customerId from user object
+
+    const { bookId } = req.params; // Extract bookId from request parameters
+
+    if (!customerId) {
+      return res.status(400).json({ error: "Customer ID is required" });
+    }
+
+    if (!bookId) {
+      return res.status(400).json({ error: "Book ID is required" });
+    }
+
+    // Construct the API URL
+    const apiUrl = `${process.env.CART_SERVICE_URL}/api/Wishlist/add-wishlist/${customerId}/${bookId}`;
+
+    // Make the DELETE request to the Cart service
+    const response = await axios.post(apiUrl);
+
+    // Return the response received from the Cart service
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error in Adding Book to Wishlist", error.message);
+
+    // Handle errors gracefully
+    if (error.response) {
+      return res
+        .status(error.response.status)
+        .json({ error: error.response.data });
+    }
+
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getCartBooks,
   deleteBookFromCart,
@@ -330,4 +438,9 @@ module.exports = {
   updateBookQuantity,
   getPaymentPage,
   makeCartEmpty,
+  sendInvoices,
+  addBookToCart,
+  addBookToWishlist,
 };
+
+// // Send the Email

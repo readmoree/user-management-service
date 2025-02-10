@@ -180,6 +180,7 @@ const login = async (req, res) => {
       token,
       role: existingUser.role,
     });
+    console.log("Login Successful");
   } catch (error) {
     console.error(error);
     return res

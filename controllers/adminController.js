@@ -141,9 +141,44 @@ const deleteUserById = async (req, res) => {
   }
 };
 
+const getAdminDetails = async (req, res) => {
+  try {
+    const { customerId } = req.user;
+
+    const [admin] = await db.query(
+      "SELECT * FROM customer WHERE customer_id = ?",
+      [customerId]
+    );
+
+    const { email, firstName, lastName, mobile, dob, gender, role, status } =
+      snakeToCamelCase(admin[0]);
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        email,
+        firstName,
+        lastName,
+        mobile,
+        dob,
+        gender,
+        role,
+        status,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   updateUserById,
   deleteUserById,
+  getAdminDetails,
 };

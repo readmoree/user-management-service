@@ -17,6 +17,7 @@ app.use(
     credentials: true, // Allow cookies to be sent
   })
 );
+// Handle preflight requests for CORS
 app.use(
   session({
     secret: "your_secret_key",

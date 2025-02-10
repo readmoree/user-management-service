@@ -30,6 +30,7 @@ router.get("/users", async (req, res) => {
       customerId: user.customer_id,
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
     }));
 
     console.log(userData);
@@ -52,5 +53,51 @@ router.get("/users", async (req, res) => {
     });
   }
 });
+router.get("/addressess", async (req, res) => {
+  try {
+    const query = req.query.ids;
 
+    if (typeof query === undefined || query === null) {
+      return res.status(400).json({
+        status: "error",
+        message: "Ids required",
+      });
+    }
+
+    const [addressess] = await db.query(
+      `SELECT * FROM address WHERE address_id IN(${query})`,
+      []
+    );
+    const addressData = addressess.map((address) => ({
+      flatNo: address.flat_no,
+      buildingName: address.building_name,
+      locality: address.locality,
+      area: address.area,
+      city: address.city,
+      district: address.district,
+      pincode: address.pincode,
+      state: address.state,
+      country: address.country,
+    }));
+
+    console.log(addressData);
+
+    // const jsonData = {};
+    // for (let i = 0; i < users.length; i++) {
+    //   const { first_name: firstName, last_name: lastName } = users[i];
+    //   jsonData[users[i].customer_id] = { firstName, lastName };
+    // }
+
+    return res.status(200).json({
+      status: "success",
+      data: addressData,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+});
 module.exports = router;

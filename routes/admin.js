@@ -6,6 +6,7 @@ const {
   getAllUsers,
   deleteUserById,
   updateUserById,
+  getAdminDetails,
 } = require("../controllers/adminController");
 const { getUser } = require("../controllers/userController");
 require("dotenv").config();
@@ -50,5 +51,7 @@ router.patch("/user/:id", updateUserById);
     example endpoint: https://localhost:4000/user/1
 */
 router.delete("/user/:id", deleteUserById);
+
+router.get("/details", getAdminDetails);
 
 module.exports = router;
