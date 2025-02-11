@@ -13,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Frontend URL
+    origin: "https://readmoree.com", // Frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
