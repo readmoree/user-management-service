@@ -5,32 +5,19 @@ const userRouter = require("./routes/user");
 const publicRouter = require("./routes/public");
 const cartWishlistRouter = require("./routes/cartWishlist");
 const morgan = require("morgan");
-<<<<<<< Updated upstream
 const authMiddleware = require("./middlewares/authMiddleware");
 const cors = require("cors");
 const session = require("express-session");
-=======
-const cors = require("cors");
-const session = require("express-session");
-
->>>>>>> Stashed changes
 require("dotenv").config();
 const app = express();
 
 app.use(
   cors({
-<<<<<<< Updated upstream
     origin: "https://readmoree.com", // Frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
 // Handle preflight requests for CORS
-=======
-    origin: "http://localhost:3000", // Frontend URL
-    credentials: true, // Allow cookies to be sent
-  })
-);
->>>>>>> Stashed changes
 app.use(
   session({
     secret: "your_secret_key",
@@ -44,10 +31,7 @@ app.use(
     },
   })
 );
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 app.use(morgan("combined"));
 
 app.use(express.json());
