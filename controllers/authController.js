@@ -3,18 +3,12 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-<<<<<<< Updated upstream
 const { snakeToCamelCase } = require("../utils/miscUtils");
-=======
->>>>>>> Stashed changes
 const sendOTPEmail = require("../utils/emailService");
 
 const registerUser = async (req, res) => {
   console.log("hiii");
-<<<<<<< Updated upstream
   console.log("hiii");
-=======
->>>>>>> Stashed changes
   try {
     const { firstName, lastName, email, password, phone, dob, gender } =
       req.body;
@@ -66,11 +60,7 @@ const registerUser = async (req, res) => {
 
     //Store email in session
     req.session.email = email;
-<<<<<<< Updated upstream
     console.log("Session set:", req.session.email); // Debugging purpos
-=======
-    console.log("Session set:", req.session.email); // Debugging purpose
->>>>>>> Stashed changes
 
     return res
       .status(201)
@@ -120,10 +110,6 @@ const verifyEmail = async (req, res) => {
         console.error("Session destruction error:", err);
       }
     });
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     return res
       .status(200)
       .json({ status: "success", message: "Email verified successfully" });
@@ -147,11 +133,6 @@ const login = async (req, res) => {
     ]);
     console.log("Users from DB:", users);
 
-<<<<<<< Updated upstream
-=======
-    console.log("Users from DB:", users);
-
->>>>>>> Stashed changes
     console.log(users);
     if (users.length === 0) {
       return res
@@ -183,13 +164,8 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       {
-<<<<<<< Updated upstream
         firstName: existingUser.firstName,
         customerId: existingUser.customerId,
-=======
-        firstName: existingUser.first_name,
-        customer_id: existingUser.customer_id,
->>>>>>> Stashed changes
         email: existingUser.email,
         role: existingUser.role,
       },
